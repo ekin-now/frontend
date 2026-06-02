@@ -1,0 +1,175 @@
+<header class="navbar">
+  <a routerLink="/" class="navbar-logo" aria-label="Ekinnow Home">
+    <span class="logo-text">EKI<span class="logo-accent">N</span>NOW</span>
+  </a>
+
+  <nav class="navbar-links" aria-label="Main navigation">
+    <a routerLink="/" class="nav-link">{{ 'nav.home' | transloco }}</a>
+    <a href="#events" class="nav-link">{{ 'nav.events' | transloco }}</a>
+    <a href="#about" class="nav-link">{{ 'nav.about' | transloco }}</a>
+  </nav>
+
+  <div class="navbar-actions">
+    <app-language-switcher />
+    @if (auth.isAuthenticated()) {
+      <a routerLink="/events">
+        <button tuiButton appearance="primary" size="s">{{ 'nav.events' | transloco }}</button>
+      </a>
+    } @else {
+      <a routerLink="/login">
+        <button tuiButton appearance="flat" size="s">{{ 'nav.login' | transloco }}</button>
+      </a>
+      <a routerLink="/register">
+        <button tuiButton appearance="primary" size="s">{{ 'nav.register' | transloco }}</button>
+      </a>
+    }
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" aria-label="Hero section">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-grid"></div>
+      <div class="hero-glow hero-glow--1"></div>
+      <div class="hero-glow hero-glow--2"></div>
+    </div>
+
+    <div class="hero-content">
+      <span class="hero-tagline">{{ 'landing.tagline' | transloco }}</span>
+      <h1 class="hero-headline">
+        <span class="hero-line hero-line--1">{{ 'landing.hero1' | transloco }}</span>
+        <span class="hero-line hero-line--2">{{ 'landing.hero2' | transloco }}</span>
+        <span class="hero-line hero-line--3">
+          <span class="hero-highlight">{{ 'landing.hero3' | transloco }}</span>
+        </span>
+      </h1>
+      <p class="hero-subtext">{{ 'landing.heroSubtext' | transloco }}</p>
+      <div class="hero-ctas">
+        <a routerLink="/register">
+          <button tuiButton appearance="primary" size="l" class="cta-primary">
+            {{ 'landing.ctaPrimary' | transloco }} →
+          </button>
+        </a>
+        <a href="#events">
+          <button tuiButton appearance="flat" size="l" class="cta-secondary">
+            {{ 'landing.ctaSecondary' | transloco }}
+          </button>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-stats" role="list" aria-label="Platform statistics">
+      <div class="stat" role="listitem">
+        <span class="stat-value">{{ 'landing.stat1Value' | transloco }}</span>
+        <span class="stat-label">{{ 'landing.stat1Label' | transloco }}</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat" role="listitem">
+        <span class="stat-value">{{ 'landing.stat2Value' | transloco }}</span>
+        <span class="stat-label">{{ 'landing.stat2Label' | transloco }}</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat" role="listitem">
+        <span class="stat-value">{{ 'landing.stat3Value' | transloco }}</span>
+        <span class="stat-label">{{ 'landing.stat3Label' | transloco }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="events" aria-label="Features">
+    <div class="section-header">
+      <h2 class="section-title">{{ 'landing.featuresTitle' | transloco }}</h2>
+      <p class="section-subtitle">{{ 'landing.featuresSubtitle' | transloco }}</p>
+    </div>
+
+    <div class="features-grid">
+      <article class="feature-card">
+        <div class="feature-number" aria-hidden="true">01</div>
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">{{ 'landing.feature1Title' | transloco }}</h3>
+        <p class="feature-desc">{{ 'landing.feature1Desc' | transloco }}</p>
+      </article>
+
+      <article class="feature-card feature-card--accent">
+        <div class="feature-number" aria-hidden="true">02</div>
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">{{ 'landing.feature2Title' | transloco }}</h3>
+        <p class="feature-desc">{{ 'landing.feature2Desc' | transloco }}</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-number" aria-hidden="true">03</div>
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">{{ 'landing.feature3Title' | transloco }}</h3>
+        <p class="feature-desc">{{ 'landing.feature3Desc' | transloco }}</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- STATS BAND -->
+  <section class="stats-band" aria-label="Statistics">
+    <div class="stats-band-inner">
+      <div class="band-stat">
+        <span class="band-value">{{ 'landing.stat1Value' | transloco }}</span>
+        <span class="band-label">{{ 'landing.stat1Label' | transloco }}</span>
+      </div>
+      <div class="band-stat">
+        <span class="band-value">{{ 'landing.stat2Value' | transloco }}</span>
+        <span class="band-label">{{ 'landing.stat2Label' | transloco }}</span>
+      </div>
+      <div class="band-stat">
+        <span class="band-value">{{ 'landing.stat3Value' | transloco }}</span>
+        <span class="band-label">{{ 'landing.stat3Label' | transloco }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta-section" id="about" aria-label="Call to action">
+    <div class="cta-section-bg" aria-hidden="true"></div>
+    <div class="cta-section-content">
+      <h2 class="cta-section-title">{{ 'landing.ctaTitle' | transloco }}</h2>
+      <p class="cta-section-text">{{ 'landing.ctaText' | transloco }}</p>
+      <a routerLink="/register">
+        <button tuiButton appearance="primary" size="l">
+          {{ 'landing.ctaButton' | transloco }}
+        </button>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-text">EKI<span class="logo-accent">N</span>NOW</span>
+      <p class="footer-tagline">{{ 'landing.footerTagline' | transloco }}</p>
+    </div>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="#" class="footer-link">{{ 'nav.events' | transloco }}</a>
+      <a href="#" class="footer-link">{{ 'nav.about' | transloco }}</a>
+      <a routerLink="/login" class="footer-link">{{ 'nav.login' | transloco }}</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <p>{{ 'landing.footerCopyright' | transloco }}</p>
+  </div>
+</footer>
