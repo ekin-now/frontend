@@ -1,4 +1,6 @@
 import { ApplicationConfig, isDevMode, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
@@ -6,6 +8,8 @@ import { provideTransloco } from '@jsverse/transloco';
 import { provideTaiga } from '@taiga-ui/core';
 import { tuiLanguageSwitcher } from '@taiga-ui/i18n';
 import type { TuiLanguage, TuiLanguageName } from '@taiga-ui/i18n';
+
+registerLocaleData(localeEs);
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './transloco-loader';

@@ -22,5 +22,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./pages/events/events').then((m) => m.EventsPage),
   },
+  {
+    path: 'timeline',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/timeline/timeline').then((m) => m.TimelinePage),
+  },
   { path: '**', redirectTo: '' },
 ];
