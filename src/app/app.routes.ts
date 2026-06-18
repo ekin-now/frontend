@@ -18,6 +18,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/auth/register/register').then((m) => m.RegisterPage),
   },
   {
+    path: 'dashboard',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/dashboard/dashboard').then((m) => m.DashboardPage),
+  },
+  {
     path: 'events',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/events/events').then((m) => m.EventsPage),

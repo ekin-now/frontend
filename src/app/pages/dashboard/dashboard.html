@@ -1,0 +1,402 @@
+<aside class="sidebar" [attr.aria-expanded]="!sidebarCollapsed()">
+  <div class="sidebar-header">
+    <a routerLink="/" class="sidebar-logo" aria-label="Ekinnow inicio">
+      @if (!sidebarCollapsed()) {
+        EKI<span class="accent">N</span>NOW
+      } @else {
+        E<span class="accent">N</span>
+      }
+    </a>
+    <button
+      type="button"
+      class="sidebar-toggle"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="sidebarCollapsed() ? 'Expandir menú lateral' : 'Colapsar menú lateral'"
+    >
+      <tui-icon [icon]="sidebarCollapsed() ? '@tui.chevrons-right' : '@tui.chevrons-left'" />
+    </button>
+  </div>
+
+  <nav class="sidebar-nav" aria-label="Navegación principal">
+    @for (item of navItems; track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+        class="nav-item"
+        [attr.title]="sidebarCollapsed() ? item.label : null"
+        [attr.aria-label]="item.label"
+      >
+        <tui-icon [icon]="item.icon" class="nav-icon" aria-hidden="true" />
+        @if (!sidebarCollapsed()) {
+          <span class="nav-label">{{ item.label }}</span>
+          @if (item.badge) {
+            <span class="nav-badge" [attr.aria-label]="item.badge + ' pendientes'">{{ item.badge }}</span>
+          }
+        } @else if (item.badge) {
+          <span class="nav-badge-dot" aria-hidden="true"></span>
+        }
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    @if (!sidebarCollapsed()) {
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" aria-hidden="true">{{ userInitials() }}</div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-email">{{ currentUser()?.email }}</span>
+          <span class="sidebar-user-role">{{ currentUser()?.role }}</span>
+        </div>
+      </div>
+    } @else {
+      <div class="sidebar-avatar sidebar-avatar-centered" aria-hidden="true">{{ userInitials() }}</div>
+    }
+  </div>
+</aside>
+
+<div class="main">
+
+  <!-- ── Topbar ──────────────────────────────────── -->
+  <header class="topbar" role="banner">
+    <div class="topbar-search">
+      <tui-icon icon="@tui.search" class="search-icon" aria-hidden="true" />
+      <input
+        type="search"
+        placeholder="Buscar eventos, participantes..."
+        class="search-input"
+        aria-label="Buscar en el sistema"
+      />
+    </div>
+
+    <div class="topbar-actions">
+      <button type="button" class="icon-btn" aria-label="Notificaciones">
+        <tui-icon icon="@tui.bell" />
+        @if (notificationCount() > 0) {
+          <span class="notif-badge" [attr.aria-label]="notificationCount() + ' notificaciones sin leer'">
+            {{ notificationCount() }}
+          </span>
+        }
+      </button>
+
+      <button
+        type="button"
+        class="topbar-avatar"
+        [tuiDropdown]="userMenu"
+        [(tuiDropdownOpen)]="menuOpen"
+        aria-label="Menú de usuario"
+        aria-haspopup="true"
+      >
+        {{ userInitials() }}
+      </button>
+
+      <ng-template #userMenu>
+        <tui-data-list>
+          <button type="button" tuiOption routerLink="/profile">Mi perfil</button>
+          <button type="button" tuiOption routerLink="/dashboard/settings">Configuración</button>
+          <button type="button" tuiOption class="option-danger" (click)="logout()">Cerrar sesión</button>
+        </tui-data-list>
+      </ng-template>
+    </div>
+  </header>
+
+  <!-- ── Content ────────────────────────────────── -->
+  <main class="content" id="main-content" tabindex="-1">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-greeting">
+          {{ greeting() }}, <span class="accent">Ekinnow</span>
+        </h1>
+        <p class="page-date">{{ today() }}</p>
+      </div>
+      <button type="button" class="btn-primary">
+        <tui-icon icon="@tui.plus" aria-hidden="true" />
+        Crear evento
+      </button>
+    </div>
+
+    <!-- ── Metrics ─────────────────────────────── -->
+    <section aria-label="Métricas principales">
+      <div class="metrics-grid">
+        @for (card of metrics; track card.label) {
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-label">{{ card.label }}</span>
+              <span
+                class="metric-icon-wrap"
+                [style.backgroundColor]="card.color + '22'"
+                [style.color]="card.color"
+                aria-hidden="true"
+              >
+                <tui-icon [icon]="card.icon" />
+              </span>
+            </div>
+            <div class="metric-value">{{ card.value }}</div>
+            <div class="metric-change" [class.positive]="card.positive" [class.negative]="!card.positive">
+              <tui-icon [icon]="card.positive ? '@tui.trending-up' : '@tui.trending-down'" aria-hidden="true" />
+              <span>{{ card.change }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ── Two-col: events + pending ─────────── -->
+    <div class="two-col">
+
+      <!-- Upcoming events table -->
+      <section class="card" aria-labelledby="upcoming-heading">
+        <div class="card-header">
+          <h2 id="upcoming-heading" class="card-title">Próximos eventos</h2>
+          <a routerLink="/dashboard/events" class="card-link">Ver todos</a>
+        </div>
+        <div class="table-wrap">
+          <table class="events-table">
+            <thead>
+              <tr>
+                <th scope="col">Evento</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Inscritos</th>
+                <th scope="col"><span class="sr-only">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ev of upcomingEvents; track ev.name) {
+                <tr>
+                  <td>
+                    <div class="event-name-cell">
+                      <span class="event-name">{{ ev.name }}</span>
+                      <span class="event-location">
+                        <tui-icon icon="@tui.map-pin" aria-hidden="true" />
+                        {{ ev.location }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="col-date">{{ ev.date }}</td>
+                  <td>
+                    <span class="status-pill" [class]="getStatusClass(ev.status)">
+                      {{ getStatusLabel(ev.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="capacity-cell">
+                      <span class="capacity-nums">{{ ev.registered }}/{{ ev.capacity }}</span>
+                      <div
+                        class="capacity-bar"
+                        role="progressbar"
+                        [attr.aria-valuenow]="getCapacityPct(ev.registered, ev.capacity)"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        [attr.aria-label]="getCapacityPct(ev.registered, ev.capacity) + '% de capacidad'"
+                      >
+                        <div class="capacity-fill" [style.width.%]="getCapacityPct(ev.registered, ev.capacity)"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="row-actions">
+                      <button type="button" class="row-btn" [attr.aria-label]="'Ver ' + ev.name">
+                        <tui-icon icon="@tui.eye" />
+                      </button>
+                      <button type="button" class="row-btn" [attr.aria-label]="'Editar ' + ev.name">
+                        <tui-icon icon="@tui.pencil" />
+                      </button>
+                      <button type="button" class="row-btn" [attr.aria-label]="'Más opciones para ' + ev.name">
+                        <tui-icon icon="@tui.more-horizontal" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Pending registrations -->
+      <section class="card pending-card" aria-labelledby="pending-heading">
+        <div class="card-header">
+          <h2 id="pending-heading" class="card-title">Inscripciones pendientes</h2>
+          <span class="badge-pill" aria-label="{{ pendingItems.length }} pendientes">{{ pendingItems.length }}</span>
+        </div>
+        <ul class="pending-list" aria-label="Lista de inscripciones pendientes">
+          @for (item of pendingItems; track item.name) {
+            <li class="pending-item">
+              <div class="pending-avatar" aria-hidden="true">{{ item.initials }}</div>
+              <div class="pending-info">
+                <span class="pending-name">{{ item.name }}</span>
+                <span class="pending-event">{{ item.event }} · {{ item.sub }}</span>
+                <span class="pending-type" [class]="'type-' + item.type">
+                  {{ getPendingTypeLabel(item.type) }}
+                </span>
+              </div>
+              <div class="pending-meta">
+                <time class="pending-time">{{ item.time }}</time>
+                <div class="pending-actions">
+                  @if (item.type !== 'cancellation') {
+                    <button
+                      type="button"
+                      class="action-btn action-approve"
+                      [attr.aria-label]="'Aprobar inscripción de ' + item.name"
+                    >
+                      <tui-icon icon="@tui.check" />
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="action-btn action-reject"
+                    [attr.aria-label]="'Rechazar inscripción de ' + item.name"
+                  >
+                    <tui-icon icon="@tui.x" />
+                  </button>
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+        <a routerLink="/dashboard/registrations" class="view-all-link">
+          Ver todas las inscripciones
+          <tui-icon icon="@tui.arrow-right" aria-hidden="true" />
+        </a>
+      </section>
+    </div>
+
+    <!-- ── Charts + Activity ────────────────── -->
+    <div class="three-col">
+
+      <!-- Revenue line chart -->
+      <section class="card chart-card" aria-labelledby="revenue-heading">
+        <div class="card-header">
+          <h2 id="revenue-heading" class="card-title">Ingresos mensuales</h2>
+          <span class="card-subtitle">EUR / mes</span>
+        </div>
+        <div class="chart-summary">
+          <div>
+            <span class="chart-metric">€18.450</span>
+            <span class="chart-metric-label">Este mes</span>
+          </div>
+          <span class="trend-badge positive">
+            <tui-icon icon="@tui.trending-up" aria-hidden="true" />
+            +18%
+          </span>
+        </div>
+        <div class="line-chart-wrap">
+          <svg
+            [attr.viewBox]="'0 0 ' + svgData().w + ' ' + svgData().h"
+            preserveAspectRatio="none"
+            class="chart-svg"
+            role="img"
+            aria-label="Gráfico de línea de ingresos mensuales"
+          >
+            <defs>
+              <linearGradient id="rev-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ff6500" stop-opacity="0.28" />
+                <stop offset="100%" stop-color="#ff6500" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path [attr.d]="svgData().fill" fill="url(#rev-grad)" />
+            <path
+              [attr.d]="svgData().line"
+              fill="none"
+              stroke="#ff6500"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle
+              [attr.cx]="svgData().lastPt.x"
+              [attr.cy]="svgData().lastPt.y"
+              r="4"
+              fill="#ff6500"
+              stroke="#0f0f0f"
+              stroke-width="2"
+            />
+          </svg>
+          <div class="chart-months" aria-hidden="true">
+            @for (m of months; track $index) {
+              <span>{{ m }}</span>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- Registrations bar chart -->
+      <section class="card chart-card" aria-labelledby="bar-heading">
+        <div class="card-header">
+          <h2 id="bar-heading" class="card-title">Inscripciones</h2>
+          <span class="card-subtitle">por mes</span>
+        </div>
+        <div class="bar-chart-wrap" role="img" aria-label="Gráfico de barras de inscripciones por mes">
+          <div class="bars">
+            @for (bar of barData(); track $index) {
+              <div class="bar-col">
+                <div class="bar-inner">
+                  <div
+                    class="bar"
+                    [class.bar-active]="bar.current"
+                    [style.height.%]="bar.pct"
+                    [attr.title]="bar.value + ' inscripciones'"
+                  ></div>
+                </div>
+                <span class="bar-label" aria-hidden="true">{{ bar.month }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- Activity timeline -->
+      <section class="card activity-card" aria-labelledby="activity-heading">
+        <div class="card-header">
+          <h2 id="activity-heading" class="card-title">Actividad reciente</h2>
+        </div>
+        <ol class="activity-list" aria-label="Línea de tiempo de actividad reciente">
+          @for (item of activityItems; track $index) {
+            <li class="activity-item">
+              <span class="activity-dot dot-{{ item.type }}" aria-hidden="true"></span>
+              <div class="activity-body">
+                <span class="activity-text">{{ item.text }}</span>
+                <time class="activity-time">{{ item.time }}</time>
+              </div>
+            </li>
+          }
+        </ol>
+      </section>
+    </div>
+
+    <!-- ── Quick actions ─────────────────────── -->
+    <section aria-labelledby="actions-heading">
+      <h2 id="actions-heading" class="section-label">Acciones rápidas</h2>
+      <div class="actions-grid">
+        <button type="button" class="action-card">
+          <tui-icon icon="@tui.plus" class="action-icon" aria-hidden="true" />
+          <span>Crear evento</span>
+        </button>
+        <button type="button" class="action-card">
+          <tui-icon icon="@tui.upload" class="action-icon" aria-hidden="true" />
+          <span>Importar participantes</span>
+        </button>
+        <button type="button" class="action-card">
+          <tui-icon icon="@tui.map" class="action-icon" aria-hidden="true" />
+          <span>Subir GPX</span>
+        </button>
+        <button type="button" class="action-card">
+          <tui-icon icon="@tui.trophy" class="action-icon" aria-hidden="true" />
+          <span>Publicar resultados</span>
+        </button>
+        <button type="button" class="action-card">
+          <tui-icon icon="@tui.download" class="action-icon" aria-hidden="true" />
+          <span>Exportar inscripciones</span>
+        </button>
+        <button type="button" class="action-card">
+          <tui-icon icon="@tui.send" class="action-icon" aria-hidden="true" />
+          <span>Enviar comunicación</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>
