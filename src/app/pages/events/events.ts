@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import {
@@ -903,6 +904,12 @@ import { SportEvent } from '../../core/models/sport-event.model';
               <article
                 class="event-card"
                 [class.event-card-featured]="event.featured"
+                (click)="openEvent(event.id)"
+                (keydown.enter)="openEvent(event.id)"
+                (keydown.space)="openEvent(event.id)"
+                tabindex="0"
+                role="button"
+                [attr.aria-label]="'Ver detalle de ' + event.name"
               >
                 <!-- Banner -->
                 <div class="card-banner">
@@ -988,6 +995,7 @@ import { SportEvent } from '../../core/models/sport-event.model';
 })
 export class EventsPage {
   private readonly eventsService = inject(EventsService);
+  private readonly router = inject(Router);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   readonly sportType = signal('');
@@ -1078,6 +1086,10 @@ export class EventsPage {
   selectCountry(c: string): void {
     this.country.set(c);
     this.region.set('');
+  }
+
+  openEvent(id: string): void {
+    this.router.navigate(['/events', id]);
   }
 
   clearFilters(): void {

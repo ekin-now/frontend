@@ -23,6 +23,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/events/events').then((m) => m.EventsPage),
   },
   {
+    path: 'events/:id',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/events/event-detail/event-detail').then((m) => m.EventDetailPage),
+  },
+  {
     path: 'timeline',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/timeline/timeline').then((m) => m.TimelinePage),

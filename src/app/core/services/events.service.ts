@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EventFilters, FilterOptions, SportEvent } from '../models/sport-event.model';
+import { EventFilters, FilterOptions, SportEvent, SportEventDetail } from '../models/sport-event.model';
 
 const API = 'http://localhost:3000';
 
@@ -23,5 +23,9 @@ export class EventsService {
     let params = new HttpParams();
     if (country) params = params.set('country', country);
     return this.http.get<FilterOptions>(`${API}/sport-events/filter-options`, { params });
+  }
+
+  getEventDetail(id: string): Observable<SportEventDetail> {
+    return this.http.get<SportEventDetail>(`${API}/sport-events/${id}/detail`);
   }
 }

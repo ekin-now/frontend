@@ -1,3 +1,54 @@
+export interface Company {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  website?: string;
+  email?: string;
+  logoUrl?: string;
+  bannerUrl?: string;
+  country?: string;
+  city?: string;
+  sportType?: string;
+  companyType?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SportSubEvent {
+  id: string;
+  sportEventId: string;
+  name: string;
+  shortDescription: string;
+  description: string;
+  status: string;
+  distanceKm?: number;
+  elevationGainMeters?: number;
+  capacity: number;
+  registeredParticipants: number;
+  price: number;
+  currency: string;
+  startDateTime: string;
+  timeLimitMinutes?: number;
+  minimumAge?: number;
+  maximumAge?: number;
+  gpxUrl?: string;
+  coverImageUrl?: string;
+  bibNumberRequired: boolean;
+  bibStartNumber?: number;
+  bibEndNumber?: number;
+  registrationOpenAt?: string;
+  registrationCloseAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SportEventDetail extends SportEvent {
+  company: Company;
+  subEvents: SportSubEvent[];
+}
+
 export interface SportEvent {
   id: string;
   slug: string;
